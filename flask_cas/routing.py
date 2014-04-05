@@ -9,7 +9,11 @@ from .cas_urls import \
     create_cas_logout_url, \
     create_cas_validate_url
 
-import urllib
+
+try:
+    from urllib import urlopen
+except ImportError:
+    from urllib.request import urlopen
 
 blueprint = flask.Blueprint('cas', __name__)
 
@@ -83,7 +87,7 @@ def validate(ticket):
         cas_validate_url))
 
     try:
-        (isValid, username) = urllib.urlopen(cas_validate_url).readlines()
+        (isValid, username) = urlopen(cas_validate_url).readlines()
         isValid = True if isValid.strip() == b'yes' else False
         username = username.strip().decode('utf8', 'ignore')
     except ValueError:

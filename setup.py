@@ -17,6 +17,11 @@ if __name__ == "__main__":
         install_requires = [
             "Flask",
         ],
+        test_requires = [
+            "Nose",
+            "Mock",
+        ],
+        test_suite = "nose.collector",
         include_package_data=True,
         classifiers=[
             'Environment :: Web Environment',
@@ -27,5 +32,5 @@ if __name__ == "__main__":
             'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
             'Topic :: Software Development :: Libraries :: Python Modules'
         ],
-        use_2to3=True,
+        zip_safe=False,
     )

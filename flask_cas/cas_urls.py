@@ -4,8 +4,14 @@ flask_cas.cas_urls
 Functions for creating urls to access CAS.
 """
 
-import urllib
-import urlparse
+try:
+    from urllib import quote
+    from urllib import urlencode
+    from urlparse import urljoin
+except ImportError:
+    from urllib.parse import quote
+    from urllib.parse import urljoin
+    from urllib.parse import urlencode
 
 def create_url(base, path=None, *query):
     """ Create a url.
@@ -32,11 +38,11 @@ def create_url(base, path=None, *query):
     url = base
     # Add the path to the url if its not None.
     if path is not None:
-        url = urlparse.urljoin(url, urllib.quote(path))
+        url = urljoin(url, quote(path))
     # Remove key/value pairs with None values.
-    query = filter(lambda (k,v): v is not None, query)
+    query = filter(lambda pair: pair[1] is not None, query)
     # Add the query string to the url
-    url = urlparse.urljoin(url, '?{}'.format(urllib.urlencode(query)))
+    url = urljoin(url, '?{}'.format(urlencode(list(query))))
     return url
 
 def create_cas_login_url(cas_url, service, renew=None, gateway=None):

@@ -42,7 +42,7 @@ pip install Nose Mock
 Tests can be ran locally as well as by TravisCI. 
 
 ```sh
-python setup.py nosetests --with-doctest
+nosetests
 ```
 
 ## License

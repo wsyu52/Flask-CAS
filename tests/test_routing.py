@@ -1,8 +1,15 @@
 import unittest
 import urllib
 import flask
-import mock
-from StringIO import StringIO
+import io
+
+try:
+    from urllib import urlopen
+    import mock
+except ImportError:
+    from urllib.request import urlopen
+    import unittest.mock as mock
+
 from flask_cas import routing
 
 class test_routing(unittest.TestCase):
@@ -35,21 +42,35 @@ class test_routing(unittest.TestCase):
                 response.headers['Location'],
                 'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Flogin%2F')
     
-    @mock.patch.object(urllib, 'urlopen',
-            return_value=StringIO('yes\nbob\n'))
+    @mock.patch.object(routing, 'urlopen',
+            return_value=io.BytesIO(b'yes\nbob\n'))
     def test_login_by_logged_in_user_valid(self, m):
+        ticket='12345-abcdefg-cas'
         with self.app.test_client() as client:
-            ticket='12345-abcdefg-cas'
+            with client.session_transaction() as s:
+                s[self.app.config['CAS_TOKEN_SESSION_KEY']] = ticket
             response = client.get('/login/')
-            # TODO
+            self.assertEqual(
+                flask.session[self.app.config['CAS_USERNAME_SESSION_KEY']],
+                'bob')
+            self.assertEqual(
+                flask.session[self.app.config['CAS_TOKEN_SESSION_KEY']],
+                ticket)
 
-    @mock.patch.object(urllib, 'urlopen',
-            return_value=StringIO('yes\nbob\n'))
+    @mock.patch.object(routing, 'urlopen',
+            return_value=io.BytesIO(b'no\n\n'))
     def test_login_by_logged_in_user_invalid(self, m):
+        ticket='12345-abcdefg-cas'
         with self.app.test_client() as client:
-            ticket='12345-abcdefg-cas'
+            with client.session_transaction() as s:
+                s[self.app.config['CAS_TOKEN_SESSION_KEY']] = ticket
             response = client.get('/login/')
-            # TODO
+            self.assertNotIn(
+                self.app.config['CAS_USERNAME_SESSION_KEY'],
+                flask.session)
+            self.assertNotIn(
+                self.app.config['CAS_TOKEN_SESSION_KEY'],
+                flask.session)
     
     @mock.patch.object(routing, 'validate', return_value=True)
     def test_login_by_cas_valid(self, m):
@@ -82,8 +103,8 @@ class test_routing(unittest.TestCase):
                 response.headers['Location'],
                 'http://cas.server.com/cas/logout')
 
-    @mock.patch.object(urllib, 'urlopen',
-            return_value=StringIO('yes\nbob\n'))
+    @mock.patch.object(routing, 'urlopen',
+            return_value=io.BytesIO(b'yes\nbob\n'))
     def test_validate_valid(self, m):
         with self.app.test_client() as client:
             with self.app.test_request_context('/login/'):
@@ -92,14 +113,17 @@ class test_routing(unittest.TestCase):
                 self.assertEqual(
                     flask.session[self.app.config['CAS_USERNAME_SESSION_KEY']],
                     'bob')
-                self.assertEqual(
-                    flask.session[self.app.config['CAS_TOKEN_SESSION_KEY']],
-                    ticket)
 
-    @mock.patch.object(urllib, 'urlopen',
-            return_value=StringIO('no\n\n'))
-    def test_validate_valid(self, m):
+    @mock.patch.object(routing, 'urlopen',
+            return_value=io.BytesIO(b'no\n\n'))
+    def test_validate_invalid(self, m):
         with self.app.test_client() as client:
             with self.app.test_request_context('/login/'):
                 ticket='12345-abcdefg-cas'
                 self.assertEqual(routing.validate(ticket), False)
+                self.assertNotIn(
+                    self.app.config['CAS_USERNAME_SESSION_KEY'],
+                    flask.session)
+                self.assertNotIn(
+                    self.app.config['CAS_TOKEN_SESSION_KEY'],
+                    flask.session)
