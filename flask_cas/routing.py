@@ -84,8 +84,8 @@ def validate(ticket):
 
     try:
         (isValid, username) = urllib.urlopen(cas_validate_url).readlines()
-        isValid = True if isValid.strip() == 'yes' else False
-        username = username.strip()
+        isValid = True if isValid.strip() == b'yes' else False
+        username = username.strip().decode('utf8', 'ignore')
     except ValueError:
         current_app.logger.error("CAS returned unexpected result")
         isValid = False
