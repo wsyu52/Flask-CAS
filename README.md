@@ -92,8 +92,11 @@ the `username` will be removed from the session.
 
 |Key                      | Default        |
 |-------------------------|----------------|
-|CAS_TOKEN_SESSION_KEY    | '_CAS_TOKEN'   |
-|CAS_USERNAME_SESSION_KEY | 'CAS_USERNAME' |
+|CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
+|CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
+|CAS_LOGIN_ROUTE          | '/cas'         |
+|CAS_LOGOUT_ROUTE         | '/cas/logout'  |
+|CAS_VALIDATE_ROUTE       | '/cas/validate'|
 
 ## Example ##
 
