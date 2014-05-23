@@ -40,12 +40,12 @@ install Flask-CAS in a virtualenv.
 
 ## Instructions ##
 
-After Flask-CAS is installed you will be able to import the `flask_cas`
+After Flask-CAS is installed you will be able to import the `flask.ext.cas`
 packages. There is only one thing you care about inside the package
 which is the `CAS` class.
 
 ```python
-from flask_cas import CAS
+from flask.ext.cas import CAS
 ```
 
 There are two ways to use the `CAS` class.
@@ -103,11 +103,10 @@ the `username` will be removed from the session.
 ```python
 import flask
 from flask import Flask
-
-import flask_cas
+from flask.ext.cas import CAS
 
 app = Flask(__name__)
-flask_cas.CAS(app, '/cas')
+CAS(app, '/cas')
 app.config['CAS_SERVER'] = 'https://sso.pdx.edu' 
 app.config['CAS_AFTER_LOGIN'] = 'route_root'
 
