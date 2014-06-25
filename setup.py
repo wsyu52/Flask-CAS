@@ -16,10 +16,10 @@ if __name__ == "__main__":
         long_description=textwrap.dedent("""\
             Flask-CAS
             =========
-    
+
             Flask-CAS is a Flask extension which makes it easy to
             authenticate with a CAS.
-            
+
             CAS
             ===
 
@@ -36,22 +36,28 @@ if __name__ == "__main__":
 
             First create a Flask instance:
 
+            .. code:: python
+
                 from flask import Flask
 
                 app = Flask(__name__)
 
             Apply CAS on your Flask instance:
 
-                from flask_cas import CAS
-                
+            .. code:: python
+
+                from flask.ext.cas import CAS
+
                 CAS(app)
 
             Do needed configuration:
 
+            .. code:: python
+
                 app.config['CAS_SERVER'] = 'https://sso.pdx.edu' 
 
                 app.config['CAS_AFTER_LOGIN'] = 'route_root'
-            
+
             Using
             =====
 
