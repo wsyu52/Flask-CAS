@@ -2,6 +2,8 @@
 flask_cas.__init__
 """
 
+import flask
+
 # Find the stack on which we want to store the database connection.
 # Starting with Flask 0.9, the _app_ctx_stack is the correct one,
 # before that we need to use the _request_ctx_stack.
@@ -57,3 +59,13 @@ class CAS(object):
 
     def teardown(self, exception):
         ctx = stack.top
+    
+    @property
+    def username(self):
+        return flask.session.get(
+            self.app.config['CAS_USERNAME_SESSION_KEY'], None)
+
+    @property
+    def token(self):
+        return flask.session.get(
+            self.app.config['CAS_TOKEN_SESSION_KEY'], None)
