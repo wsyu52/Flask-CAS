@@ -7,7 +7,8 @@ try:
 except ImportError:
     import unittest.mock as mock
 
-from flask_cas import routing
+from flask.ext.cas import routing
+from flask.ext.cas import CAS
 
 
 class test_routing(unittest.TestCase):
@@ -21,7 +22,7 @@ class test_routing(unittest.TestCase):
             return ''
 
         self.app.secret_key = "SECRET_KEY"
-        self.app.register_blueprint(routing.blueprint)
+        self.cas = CAS(self.app)
         self.app.testing = True
 
         self.app.config['CAS_SERVER'] = 'http://cas.server.com'
@@ -52,10 +53,10 @@ class test_routing(unittest.TestCase):
                 s[self.app.config['CAS_TOKEN_SESSION_KEY']] = ticket
             client.get('/login/')
             self.assertEqual(
-                flask.session[self.app.config['CAS_USERNAME_SESSION_KEY']],
+                self.cas.username,
                 'bob')
             self.assertEqual(
-                flask.session[self.app.config['CAS_TOKEN_SESSION_KEY']],
+                self.cas.token,
                 ticket)
 
     @mock.patch.object(routing, 'urlopen',
@@ -83,7 +84,7 @@ class test_routing(unittest.TestCase):
                 response.headers['Location'],
                 'http://localhost/')
             self.assertEqual(
-                flask.session[self.app.config['CAS_TOKEN_SESSION_KEY']],
+                self.cas.token,
                 ticket)
 
     @mock.patch.object(routing, 'validate', return_value=False)
@@ -111,7 +112,7 @@ class test_routing(unittest.TestCase):
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), True)
             self.assertEqual(
-                flask.session[self.app.config['CAS_USERNAME_SESSION_KEY']],
+                self.cas.username,
                 'bob')
 
     @mock.patch.object(routing, 'urlopen',

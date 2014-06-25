@@ -106,7 +106,7 @@ from flask import Flask
 from flask.ext.cas import CAS
 
 app = Flask(__name__)
-CAS(app, '/cas')
+cas = CAS(app, '/cas')
 app.config['CAS_SERVER'] = 'https://sso.pdx.edu' 
 app.config['CAS_AFTER_LOGIN'] = 'route_root'
 
@@ -114,6 +114,6 @@ app.config['CAS_AFTER_LOGIN'] = 'route_root'
 def route_root():
     return flask.render_template(
         'layout.html',
-        username = flask.session.get(app.config['CAS_USERNAME_SESSION_KEY'], None),
+        username = cas.username,
     )
 ```
