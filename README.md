@@ -18,6 +18,13 @@ software package that implements this protocol.
 
 http://www.jasig.org/cas
 
+## Demo ##
+
+Want to see it in action? Here is a live demo that lets you 
+authenticate against your favorite CAS Server!
+
+http://flask-cas-extension-demo.cameronbwhite.com/
+
 ## Installation ##
 
 ### PyPI ###
