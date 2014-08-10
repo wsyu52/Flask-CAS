@@ -39,6 +39,20 @@ class test_flask_cas(unittest.TestCase):
                 response.headers['Location'],
                 'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
 
+    def test_cas_constructor_properties(self):
+        
+        self.app = flask.Flask(__name__)
+        cas = CAS(self.app)
+
+        with self.app.test_request_context():
+            self.assertEqual(
+                cas.username,
+                None)
+
+            self.assertEqual(
+                cas.token,
+                None)
+
     def test_cas_init_app(self):
         self.app = flask.Flask(__name__)
         cas = CAS()
@@ -74,3 +88,19 @@ class test_flask_cas(unittest.TestCase):
             self.assertEqual(
                 response.headers['Location'],
                 'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
+    
+    def test_cas_init_app_properties(self):
+        
+        self.app = flask.Flask(__name__)
+        cas = CAS()
+
+        cas.init_app(self.app)
+
+        with self.app.test_request_context():
+            self.assertEqual(
+                cas.username,
+                None)
+
+            self.assertEqual(
+                cas.token,
+                None)
