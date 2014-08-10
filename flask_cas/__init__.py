@@ -37,7 +37,7 @@ class CAS(object):
     """
 
     def __init__(self, app=None, url_prefix=None):
-        self.app = app
+        self._app = app
         if app is not None:
             self.init_app(app, url_prefix)
 
@@ -60,13 +60,18 @@ class CAS(object):
 
     def teardown(self, exception):
         ctx = stack.top
+    
+    @property
+    def app(self):
+        return self._app or current_app
 
     @property
     def username(self):
         return flask.session.get(
-            current_app.config['CAS_USERNAME_SESSION_KEY'], None)
+            self.app.config['CAS_USERNAME_SESSION_KEY'], None)
+
 
     @property
     def token(self):
         return flask.session.get(
-            current_app.config['CAS_TOKEN_SESSION_KEY'], None)
+            self.app.config['CAS_TOKEN_SESSION_KEY'], None)
