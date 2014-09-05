@@ -77,8 +77,6 @@ def validate(ticket):
     key `CAS_USERNAME_SESSION_KEY`.
     """
 
-    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
-
     current_app.logger.debug("validating token {}".format(ticket))
 
     cas_validate_url = create_cas_validate_url(
@@ -90,18 +88,97 @@ def validate(ticket):
     current_app.logger.debug("Making GET request to {}".format(
         cas_validate_url))
 
-    try:
-        (isValid, username) = urlopen(cas_validate_url).readlines()
-        isValid = True if isValid.strip() == b'yes' else False
-        username = username.strip().decode('utf8', 'ignore')
-    except ValueError:
-        current_app.logger.error("CAS returned unexpected result")
-        isValid = False
+    response = urlopen(cas_validate_url)
+    _PROTOCOLS = {'1': _validate_cas1, '2': _validate_cas2, '3': _validate_cas3}
 
-    if isValid:
+    if current_app.config['CAS_VERSION'] not in _PROTOCOLS:
+        raise ValueError('Unsupported CAS_VERSION %r' % current_app.config['CAS_VERSION'])
+
+    _validate = _PROTOCOLS[current_app.config['CAS_VERSION']]
+    is_valid = _validate(response)
+
+    if is_valid:
         current_app.logger.debug("valid")
-        flask.session[cas_username_session_key] = username
     else:
         current_app.logger.debug("invalid")
 
-    return isValid
+    return is_valid
+
+
+def _validate_cas1(response):
+    try:
+        (is_valid, username) = response.readlines()
+        is_valid = True if is_valid.strip() == b'yes' else False
+        if is_valid:
+            cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+            username = username.strip().decode('utf8', 'ignore')
+            flask.session[cas_username_session_key] = username
+    except ValueError:
+        current_app.logger.error("CAS returned unexpected result")
+        is_valid = False
+
+    response.close
+
+    return is_valid
+
+
+def _validate_cas2(response):
+    from xml.etree import ElementTree
+
+    try:
+        data = response.read()
+        tree = ElementTree.fromstring(data)
+        user = tree.find('*/cas:user', namespaces=dict(cas='http://www.yale.edu/tp/cas'))
+        is_valid = user != None
+        if is_valid:
+            cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+            username = user.text
+            flask.session[cas_username_session_key] = username
+            return True
+        else:
+            error = tree.find('cas:authenticationFailure', namespaces=dict(cas='http://www.yale.edu/tp/cas'))
+            if error is None:
+                current_app.logger.error('Error: Unknown response, ' + data)
+            else:
+                current_app.logger.error('Error: ' + error.get('code') + ', ' + error.text)
+            return False
+    finally:
+        response.close()
+
+
+def _validate_cas3(response):
+    from xml.etree import ElementTree
+
+    try:
+        data = response.read()
+        tree = ElementTree.fromstring(data)
+        user = tree.find('*/cas:user', namespaces=dict(cas='http://www.yale.edu/tp/cas'))
+        is_valid = user != None
+        if is_valid:
+            cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+            cas_attributes_session_key = current_app.config['CAS_ATTRIBUTES_SESSION_KEY']
+            attributes = {}
+            username = user.text
+            attrs = tree.find('*/cas:attributes', namespaces=dict(cas='http://www.yale.edu/tp/cas'))
+            for attr in attrs:
+                tag = attr.tag.split("}").pop()
+                if tag in attributes:
+                    # found multiple value attribute
+                    if isinstance(attributes[tag], list):
+                        attributes[tag].append(attr.text)
+                    else:
+                        attributes[tag] = [attributes[tag], attr.text]
+                else:
+                    attributes[tag] = attr.text
+            flask.session[cas_username_session_key] = username
+            flask.session[cas_attributes_session_key] = attributes
+            return True
+        else:
+            error = tree.find('cas:authenticationFailure', namespaces=dict(cas='http://www.yale.edu/tp/cas'))
+            if error is None:
+                current_app.logger.error('Error: Unknown response, ' + data)
+            else:
+                current_app.logger.error('Error: ' + error.get('code') + ', ' + error.text)
+            return False
+    finally:
+        response.close()
