@@ -117,7 +117,7 @@ def _validate_cas1(response):
         current_app.logger.error("CAS returned unexpected result")
         is_valid = False
 
-    response.close
+    response.close()
 
     return is_valid
 
