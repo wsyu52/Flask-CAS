@@ -37,6 +37,11 @@ class test_routing(unittest.TestCase):
     def test_setUp(self):
         pass
 
+class test_cas_1_routing(test_routing):
+
+    def setUp(self):
+        super(test_cas_1_routing, self).setUp()
+
     def test_login_by_logged_out_user(self):
         with self.app.test_client() as client:
             response = client.get('/login/')
@@ -129,33 +134,41 @@ class test_routing(unittest.TestCase):
                 self.app.config['CAS_TOKEN_SESSION_KEY'],
                 flask.session)
 
-    @mock.patch.object(routing, 'urlopen',
-                       return_value=io.BytesIO(
-                           b'<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">'
-                           b'  <cas:authenticationSuccess>'
-                           b'    <cas:user>bob</cas:user>'
-                           b'    <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>'
-                           b'  </cas:authenticationSuccess>'
-                           b'</cas:serviceResponse>'))
-    def test_validate_cas2_valid(self, m):
+class test_cas_2_routing(test_routing):
+
+    def setUp(self):
+        super(test_cas_2_routing, self).setUp()
+        self.app.config['CAS_VERSION'] = '2'
+
+    @mock.patch.object(
+        routing, 
+        'urlopen',
+        return_value=io.BytesIO(b"""
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+              <cas:authenticationSuccess>
+                <cas:user>bob</cas:user>
+                <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
+              </cas:authenticationSuccess>
+            </cas:serviceResponse>"""))
+    def test_validate_valid(self, m):
         with self.app.test_request_context('/login/'):
-            self.app.config['CAS_VERSION'] = '2'
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), True)
             self.assertEqual(
                 self.cas.username,
                 'bob')
 
-    @mock.patch.object(routing, 'urlopen',
-                       return_value=io.BytesIO(
-                           b'<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">'
-                           b'  <cas:authenticationFailure code="INVALID_TICKET">'
-                           b'    Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized'
-                           b'  </cas:authenticationFailure>'
-                           b'</cas:serviceResponse>'))
-    def test_validate_cas2_invalid(self, m):
+    @mock.patch.object(
+        routing, 
+        'urlopen',
+        return_value=io.BytesIO(b"""
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+              <cas:authenticationFailure code="INVALID_TICKET">
+                Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
+              </cas:authenticationFailure>
+            </cas:serviceResponse>"""))
+    def test_validate_invalid(self, m):
         with self.app.test_request_context('/login/'):
-            self.app.config['CAS_VERSION'] = '2'
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), False)
             self.assertNotIn(
@@ -165,25 +178,32 @@ class test_routing(unittest.TestCase):
                 self.app.config['CAS_TOKEN_SESSION_KEY'],
                 flask.session)
 
-    @mock.patch.object(routing, 'urlopen',
-                       return_value=io.BytesIO(
-                           b'<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">'
-                           b'  <cas:authenticationSuccess>'
-                           b'    <cas:user>bob</cas:user>'
-                           b'    <cas:attributes>'
-                           b'      <cas:firstname>John</cas:firstname>'
-                           b'      <cas:lastname>Doe</cas:lastname>'
-                           b'      <cas:title>Mr.</cas:title>'
-                           b'      <cas:email>jdoe@example.org</cas:email>'
-                           b'      <cas:affiliation>staff</cas:affiliation>'
-                           b'      <cas:affiliation>faculty</cas:affiliation>'
-                           b'    </cas:attributes>'
-                           b'    <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>'
-                           b'  </cas:authenticationSuccess>'
-                           b'</cas:serviceResponse>'))
-    def test_validate_cas3_valid(self, m):
+class test_cas_3_routing(test_routing):
+
+    def setUp(self):
+        super(test_cas_3_routing, self).setUp()
+        self.app.config['CAS_VERSION'] = '3'
+
+    @mock.patch.object(
+        routing, 
+        'urlopen',
+        return_value=io.BytesIO(b"""
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+              <cas:authenticationSuccess>
+                <cas:user>bob</cas:user>
+                <cas:attributes>
+                  <cas:firstname>John</cas:firstname>
+                  <cas:lastname>Doe</cas:lastname>
+                  <cas:title>Mr.</cas:title>
+                  <cas:email>jdoe@example.org</cas:email>
+                  <cas:affiliation>staff</cas:affiliation>
+                  <cas:affiliation>faculty</cas:affiliation>
+                </cas:attributes>
+                <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
+              </cas:authenticationSuccess>
+            </cas:serviceResponse>"""))
+    def test_validate_valid(self, m):
         with self.app.test_request_context('/login/'):
-            self.app.config['CAS_VERSION'] = '3'
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), True)
             self.assertEqual(
@@ -197,16 +217,17 @@ class test_routing(unittest.TestCase):
                  'email': 'jdoe@example.org',
                  'affiliation': ['staff', 'faculty']})
 
-    @mock.patch.object(routing, 'urlopen',
-                       return_value=io.BytesIO(
-                           b'<cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">'
-                           b'  <cas:authenticationFailure code="INVALID_TICKET">'
-                           b'    Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized'
-                           b'  </cas:authenticationFailure>'
-                           b'</cas:serviceResponse>'))
-    def test_validate_cas3_invalid(self, m):
+    @mock.patch.object(
+        routing, 
+        'urlopen',
+        return_value=io.BytesIO(b"""
+            <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
+             <cas:authenticationFailure code="INVALID_TICKET">
+               Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
+             </cas:authenticationFailure>
+           </cas:serviceResponse>"""))
+    def test_validate_invalid(self, m):
         with self.app.test_request_context('/login/'):
-            self.app.config['CAS_VERSION'] = '3'
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), False)
             self.assertNotIn(
