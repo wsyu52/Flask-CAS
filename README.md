@@ -104,6 +104,7 @@ the `username` will be removed from the session.
 |CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES|
 |CAS_LOGIN_ROUTE          | '/cas'         |
 |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
+|CAS_LOGOUT_RETURN_URL    | None           |
 |CAS_VALIDATE_ROUTE       | '/cas/validate'|
 |CAS_VERSION              | '1'            |
 
