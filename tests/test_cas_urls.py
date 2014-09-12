@@ -174,7 +174,7 @@ class test_create_cas_logout_url(unittest.TestCase):
                 '/cas',
                 'http://localhost:5000',
             ),
-            'http://sso.pdx.edu/cas/logout?url=http%3A%2F%2Flocalhost%3A5000'
+            'http://sso.pdx.edu/cas/logout?service=http%3A%2F%2Flocalhost%3A5000'
         )
 
     def test_with_url_for_cas2(self):
@@ -183,7 +183,6 @@ class test_create_cas_logout_url(unittest.TestCase):
                 'http://sso.pdx.edu',
                 '/cas/',
                 'http://localhost:5000',
-                '2'
             ),
             'http://sso.pdx.edu/cas/logout?service=http%3A%2F%2Flocalhost%3A5000'
         )
@@ -194,7 +193,6 @@ class test_create_cas_logout_url(unittest.TestCase):
                 'http://sso.pdx.edu',
                 '/cas/',
                 'http://localhost:5000',
-                '3'
             ),
             'http://sso.pdx.edu/cas/logout?service=http%3A%2F%2Flocalhost%3A5000'
         )

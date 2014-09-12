@@ -32,13 +32,6 @@ class test_routing(unittest.TestCase):
         self.app.config['CAS_AFTER_LOGIN'] = 'root'
         self.app.config['CAS_ROUTE_PREFIX'] = 'cas'
 
-    def test_setUp(self):
-        pass
-
-class test_cas_1_routing(test_routing):
-
-    def setUp(self):
-        super(test_cas_1_routing, self).setUp()
 
     def test_login_by_logged_out_user(self):
         with self.app.test_client() as client:
@@ -142,12 +135,6 @@ class test_cas_1_routing(test_routing):
                 self.app.config['CAS_TOKEN_SESSION_KEY'],
                 flask.session)
 
-class test_cas_2_routing(test_routing):
-
-    def setUp(self):
-        super(test_cas_2_routing, self).setUp()
-        self.app.config['CAS_VERSION'] = '2'
-
     @mock.patch.object(
         routing, 
         'urlopen',
@@ -158,10 +145,10 @@ class test_cas_2_routing(test_routing):
                 <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
               </cas:authenticationSuccess>
             </cas:serviceResponse>"""))
-    def test_validate_valid(self, m):
+    def test_serviceValidate_valid(self, m):
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
-            self.assertEqual(routing.validate(ticket), True)
+            self.assertEqual(routing.serviceValidate(ticket), True)
             self.assertEqual(
                 self.cas.username,
                 'bob')
@@ -175,10 +162,11 @@ class test_cas_2_routing(test_routing):
                 Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
               </cas:authenticationFailure>
             </cas:serviceResponse>"""))
-    def test_validate_invalid(self, m):
+    def test_serviceValidate_invalid(self, m):
+        self.app.config['CAS_VALIDATOR'] = 'serviceValidate'
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
-            self.assertEqual(routing.validate(ticket), False)
+            self.assertEqual(routing.serviceValidate(ticket), False)
             self.assertNotIn(
                 self.app.config['CAS_USERNAME_SESSION_KEY'],
                 flask.session)
@@ -186,11 +174,6 @@ class test_cas_2_routing(test_routing):
                 self.app.config['CAS_TOKEN_SESSION_KEY'],
                 flask.session)
 
-class test_cas_3_routing(test_routing):
-
-    def setUp(self):
-        super(test_cas_3_routing, self).setUp()
-        self.app.config['CAS_VERSION'] = '3'
 
     @mock.patch.object(
         routing, 
@@ -210,10 +193,11 @@ class test_cas_3_routing(test_routing):
                 <cas:proxyGrantingTicket>PGTIOU-84678-8a9d...</cas:proxyGrantingTicket>
               </cas:authenticationSuccess>
             </cas:serviceResponse>"""))
-    def test_validate_valid(self, m):
+    def test_serviceValidate_with_attributes_valid(self, m):
+        self.app.config['CAS_VALIDATOR'] = 'serviceValidate'
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
-            self.assertEqual(routing.validate(ticket), True)
+            self.assertEqual(routing.serviceValidate(ticket), True)
             self.assertEqual(
                 self.cas.username,
                 'bob')
@@ -234,10 +218,11 @@ class test_cas_3_routing(test_routing):
                Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
              </cas:authenticationFailure>
            </cas:serviceResponse>"""))
-    def test_validate_invalid(self, m):
+    def test_serviceValidate_with_attributes_invalid(self, m):
+        self.app.config['CAS_VALIDATOR'] = 'serviceValidate'
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
-            self.assertEqual(routing.validate(ticket), False)
+            self.assertEqual(routing.serviceValidate(ticket), False)
             self.assertNotIn(
                 self.app.config['CAS_USERNAME_SESSION_KEY'],
                 flask.session)

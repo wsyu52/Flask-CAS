@@ -92,29 +92,26 @@ def create_cas_login_url(cas_url,  cas_route_prefix, service, renew=None,
     )
 
 
-def create_cas_logout_url(cas_url, cas_route_prefix, url=None, cas_version='1'):
+def create_cas_logout_url(cas_url, cas_route_prefix, service=None):
     """ Create a CAS logout URL.
 
     Keyword arguments:
     cas_url -- The url to the CAS (ex. http://sso.pdx.edu)
     cas_route_prefix -- The prefix of the CAS endpoint (ex. /cas/)
-    url -- (ex.  http://localhost:5000/login)
-    cas_version -- 1, 2 or 3
+    service -- (ex.  http://localhost:5000/login)
 
     Example usage:
     >>> create_cas_logout_url(
     ...     'http://sso.pdx.edu',
     ...     'cas',
     ...     'http://localhost:5000',
-    ...     '1'
     ... )
-    'http://sso.pdx.edu/cas/logout?url=http%3A%2F%2Flocalhost%3A5000'
+    'http://sso.pdx.edu/cas/logout?service=http%3A%2F%2Flocalhost%3A5000'
     """
-    parameter_name = {'1': 'url', '2': 'service', '3': 'service'}
     return create_url(
         cas_url,
         [cas_route_prefix, 'logout'],
-        (parameter_name[cas_version], url),
+        ('service', service),
     )
 
 
