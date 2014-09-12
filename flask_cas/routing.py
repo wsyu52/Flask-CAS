@@ -31,7 +31,7 @@ def login():
 
     redirect_url = create_cas_login_url(
         current_app.config['CAS_SERVER'],
-        current_app.config['CAS_LOGIN_ROUTE'],
+        current_app.config['CAS_ROUTE_PREFIX'],
         flask.url_for('.login', _external=True))
 
     if 'ticket' in flask.request.args:
@@ -63,7 +63,7 @@ def logout():
 
     redirect_url = create_cas_logout_url(
         current_app.config['CAS_SERVER'],
-        current_app.config['CAS_LOGOUT_ROUTE'],
+        current_app.config['CAS_ROUTE_PREFIX'],
         current_app.config['CAS_LOGOUT_RETURN_URL'],
         current_app.config['CAS_VERSION'],
     )
@@ -84,7 +84,7 @@ def validate(ticket):
 
     cas_validate_url = create_cas_validate_url(
         current_app.config['CAS_SERVER'],
-        current_app.config['CAS_VALIDATE_ROUTE'],
+        current_app.config['CAS_ROUTE_PREFIX'],
         flask.url_for('.login', _external=True),
         ticket)
 

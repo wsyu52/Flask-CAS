@@ -32,10 +32,8 @@ class CAS(object):
     |CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
     |CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
     |CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES|
-    |CAS_LOGIN_ROUTE          | '/cas'         |
-    |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
+    |CAS_ROUTE_PREFIX         | '/cas'         |
     |CAS_LOGOUT_RETURN_URL    | None           |
-    |CAS_VALIDATE_ROUTE       | '/cas/validate'|
     |CAS_VERSION              | '1'            |
     """
 
@@ -49,10 +47,8 @@ class CAS(object):
         app.config.setdefault('CAS_TOKEN_SESSION_KEY', '_CAS_TOKEN')
         app.config.setdefault('CAS_USERNAME_SESSION_KEY', 'CAS_USERNAME')
         app.config.setdefault('CAS_ATTRIBUTES_SESSION_KEY', 'CAS_ATTRIBUTES')
-        app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
-        app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
+        app.config.setdefault('CAS_ROUTE_PREFIX', 'cas')
         app.config.setdefault('CAS_LOGOUT_RETURN_URL', None)
-        app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/validate')
         app.config.setdefault('CAS_VERSION', '1')
         # Register Blueprint
         app.register_blueprint(routing.blueprint, url_prefix=url_prefix)
@@ -75,7 +71,6 @@ class CAS(object):
     def username(self):
         return flask.session.get(
             self.app.config['CAS_USERNAME_SESSION_KEY'], None)
-
 
     @property
     def token(self):

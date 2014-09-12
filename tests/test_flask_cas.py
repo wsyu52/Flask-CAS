@@ -20,7 +20,7 @@ class test_flask_cas(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Flogin%2F')
+                'http://cas.server.com/cas/login?service=http%3A%2F%2Flocalhost%2Flogin%2F')
 
     def test_cas_constructor_with_url_prefix(self):
         self.app = flask.Flask(__name__)
@@ -37,7 +37,7 @@ class test_flask_cas(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
+                'http://cas.server.com/cas/login?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
 
     def test_cas_constructor_properties(self):
         
@@ -69,7 +69,7 @@ class test_flask_cas(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Flogin%2F')
+                'http://cas.server.com/cas/login?service=http%3A%2F%2Flocalhost%2Flogin%2F')
 
     def test_cas_init_app_with_prefix_url(self):
         self.app = flask.Flask(__name__)
@@ -87,7 +87,7 @@ class test_flask_cas(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
+                'http://cas.server.com/cas/login?service=http%3A%2F%2Flocalhost%2Fcas%2Flogin%2F')
     
     def test_cas_init_app_properties(self):
         

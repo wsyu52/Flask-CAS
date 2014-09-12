@@ -118,7 +118,7 @@ class test_create_cas_login_url(unittest.TestCase):
                 '/cas',
                 'http://localhost:5000',
             ),
-            'http://sso.pdx.edu/cas?service=http%3A%2F%2Flocalhost%3A5000',
+            'http://sso.pdx.edu/cas/login?service=http%3A%2F%2Flocalhost%3A5000',
         )
 
     def test_with_renew(self):
@@ -129,7 +129,7 @@ class test_create_cas_login_url(unittest.TestCase):
                 'http://localhost:5000',
                 renew="true",
             ),
-            'http://sso.pdx.edu/cas?service=http%3A%2F%2Flocalhost%3A5000&renew=true',
+            'http://sso.pdx.edu/cas/login?service=http%3A%2F%2Flocalhost%3A5000&renew=true',
         )
 
     def test_with_gateway(self):
@@ -140,7 +140,7 @@ class test_create_cas_login_url(unittest.TestCase):
                 'http://localhost:5000',
                 gateway="true",
             ),
-            'http://sso.pdx.edu/cas?service=http%3A%2F%2Flocalhost%3A5000&gateway=true',
+            'http://sso.pdx.edu/cas/login?service=http%3A%2F%2Flocalhost%3A5000&gateway=true',
         )
 
     def test_with_renew_and_gateway(self):
@@ -152,7 +152,7 @@ class test_create_cas_login_url(unittest.TestCase):
                 renew="true",
                 gateway="true",
             ),
-            'http://sso.pdx.edu/cas?service=http%3A%2F%2Flocalhost%3A5000&renew=true&gateway=true',
+            'http://sso.pdx.edu/cas/login?service=http%3A%2F%2Flocalhost%3A5000&renew=true&gateway=true',
         )
 
 
@@ -162,7 +162,7 @@ class test_create_cas_logout_url(unittest.TestCase):
         self.assertEqual(
             create_cas_logout_url(
                 'http://sso.pdx.edu',
-                '/cas/logout'
+                '/cas/'
             ),
             'http://sso.pdx.edu/cas/logout',
         )
@@ -171,7 +171,7 @@ class test_create_cas_logout_url(unittest.TestCase):
         self.assertEqual(
             create_cas_logout_url(
                 'http://sso.pdx.edu',
-                '/cas/logout',
+                '/cas',
                 'http://localhost:5000',
             ),
             'http://sso.pdx.edu/cas/logout?url=http%3A%2F%2Flocalhost%3A5000'
@@ -181,7 +181,7 @@ class test_create_cas_logout_url(unittest.TestCase):
         self.assertEqual(
             create_cas_logout_url(
                 'http://sso.pdx.edu',
-                '/cas/logout',
+                '/cas/',
                 'http://localhost:5000',
                 '2'
             ),
@@ -192,7 +192,7 @@ class test_create_cas_logout_url(unittest.TestCase):
         self.assertEqual(
             create_cas_logout_url(
                 'http://sso.pdx.edu',
-                '/cas/logout',
+                '/cas/',
                 'http://localhost:5000',
                 '3'
             ),
@@ -205,7 +205,7 @@ class test_create_cas_validate_url(unittest.TestCase):
         self.assertEqual(
             create_cas_validate_url(
                 'http://sso.pdx.edu',
-                '/cas/validate',
+                '/cas/',
                 'http://localhost:5000/login',
                 'ST-58274-x839euFek492ou832Eena7ee-cas'
             ),
@@ -216,7 +216,7 @@ class test_create_cas_validate_url(unittest.TestCase):
         self.assertEqual(
             create_cas_validate_url(
                 'http://sso.pdx.edu',
-                '/cas/validate',
+                '/cas/',
                 'http://localhost:5000/login',
                 'ST-58274-x839euFek492ou832Eena7ee-cas',
                 renew='true',
