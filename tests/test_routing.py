@@ -111,6 +111,16 @@ class test_cas_1_routing(test_routing):
                 response.headers['Location'],
                 'http://cas.server.com/cas/logout')
 
+    def test_logout_with_return_url(self):
+        with self.app.test_client() as client:
+            self.app.config['CAS_VERSION'] = '2'
+            self.app.config['CAS_LOGOUT_RETURN_URL'] = 'http://example.com'
+            response = client.get('/logout/')
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(
+                response.headers['Location'],
+                'http://cas.server.com/cas/logout?service=http%3A%2F%2Fexample.com')
+
     @mock.patch.object(routing, 'urlopen',
                        return_value=io.BytesIO(b'yes\nbob\n'))
     def test_validate_valid(self, m):

@@ -34,6 +34,7 @@ class CAS(object):
     |CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES|
     |CAS_LOGIN_ROUTE          | '/cas'         |
     |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
+    |CAS_LOGOUT_RETURN_URL    | None           |
     |CAS_VALIDATE_ROUTE       | '/cas/validate'|
     |CAS_VERSION              | '1'            |
     """
@@ -50,6 +51,7 @@ class CAS(object):
         app.config.setdefault('CAS_ATTRIBUTES_SESSION_KEY', 'CAS_ATTRIBUTES')
         app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
         app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
+        app.config.setdefault('CAS_LOGOUT_RETURN_URL', None)
         app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/validate')
         app.config.setdefault('CAS_VERSION', '1')
         # Register Blueprint
@@ -64,7 +66,7 @@ class CAS(object):
 
     def teardown(self, exception):
         ctx = stack.top
-    
+
     @property
     def app(self):
         return self._app or current_app
