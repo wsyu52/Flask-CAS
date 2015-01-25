@@ -74,3 +74,9 @@ class CAS(object):
     def token(self):
         return flask.session.get(
             self.app.config['CAS_TOKEN_SESSION_KEY'], None)
+
+def login():
+    return flask.redirect(flask.url_for('cas.login', _external=True))
+
+def logout():
+    return flask.redirect(flask.url_for('cas.logout', _external=True))
