@@ -70,7 +70,6 @@ class CAS(object):
         return flask.session.get(
             self.app.config['CAS_USERNAME_SESSION_KEY'], None)
 
-
     @property
     def token(self):
         return flask.session.get(
