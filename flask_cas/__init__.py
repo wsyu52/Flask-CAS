@@ -15,6 +15,7 @@ except ImportError:
 
 from . import routing
 
+from functools import wraps
 
 class CAS(object):
     """
@@ -70,8 +71,23 @@ class CAS(object):
         return flask.session.get(
             self.app.config['CAS_USERNAME_SESSION_KEY'], None)
 
-
     @property
     def token(self):
         return flask.session.get(
             self.app.config['CAS_TOKEN_SESSION_KEY'], None)
+
+def login():
+    return flask.redirect(flask.url_for('cas.login', _external=True))
+
+def logout():
+    return flask.redirect(flask.url_for('cas.logout', _external=True))
+
+def login_required(function):
+    @wraps(function)
+    def wrap(*args, **kwargs):
+        if 'CAS_USERNAME' not in flask.session:
+            flask.session['CAS_AFTER_LOGIN_SESSION_URL'] = flask.request.path
+            return login()
+        else:
+            return function(*args, **kwargs)
+    return wrap

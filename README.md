@@ -86,6 +86,26 @@ configuration value.
 The `/logout/` route will redirect the user to the CAS logout page and
 the `username` will be removed from the session.
 
+For convenience you can use the `cas.login` and `cas.logout`
+functions to redirect users to the login and logout pages. 
+
+    ```python
+    from flask.ext.cas import login
+    from flask.ext.cas import logout
+    ```
+
+If you would like to require that a user is logged in before continuing
+you may use the `cas.login_required` method.
+
+    ```python
+    from flask.ext.cas import login_required
+
+    app.route('/foo')
+    @login_required
+    def foo():
+        pass
+    ```
+
 ### Configuration ###
 
 #### Required Configs ####
@@ -111,6 +131,7 @@ the `username` will be removed from the session.
 import flask
 from flask import Flask
 from flask.ext.cas import CAS
+from flask.ext.cas import login_required
 
 app = Flask(__name__)
 cas = CAS(app, '/cas')
@@ -118,6 +139,7 @@ app.config['CAS_SERVER'] = 'https://sso.pdx.edu'
 app.config['CAS_AFTER_LOGIN'] = 'route_root'
 
 @app.route('/')
+@login_required
 def route_root():
     return flask.render_template(
         'layout.html',
