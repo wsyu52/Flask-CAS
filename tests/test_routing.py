@@ -67,18 +67,16 @@ class test_routing(unittest.TestCase):
             with client.session_transaction() as s:
                 s[self.app.config['CAS_TOKEN_SESSION_KEY']] = ticket
             client.get('/login/')
-            self.assertNotIn(
-                self.app.config['CAS_USERNAME_SESSION_KEY'],
-                flask.session)
-            self.assertNotIn(
-                self.app.config['CAS_TOKEN_SESSION_KEY'],
-                flask.session)
+            self.assertTrue(
+                self.app.config['CAS_USERNAME_SESSION_KEY'] not in flask.session)
+            self.assertTrue(
+                self.app.config['CAS_TOKEN_SESSION_KEY'] not in flask.session)
 
     @mock.patch.object(routing, 'validate', return_value=True)
     def test_login_by_cas_valid(self, m):
         with self.app.test_client() as client:
             ticket = '12345-abcdefg-cas'
-            response = client.get('/login/?ticket={}'.format(ticket))
+            response = client.get('/login/?ticket={0}'.format(ticket))
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
@@ -91,7 +89,7 @@ class test_routing(unittest.TestCase):
     def test_login_by_cas_invalid(self, m):
         with self.app.test_client() as client:
             ticket = '12345-abcdefg-cas'
-            response = client.get('/login/?ticket={}'.format(ticket))
+            response = client.get('/login/?ticket={0}'.format(ticket))
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
@@ -121,9 +119,7 @@ class test_routing(unittest.TestCase):
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), False)
-            self.assertNotIn(
-                self.app.config['CAS_USERNAME_SESSION_KEY'],
-                flask.session)
-            self.assertNotIn(
-                self.app.config['CAS_TOKEN_SESSION_KEY'],
-                flask.session)
+            self.assertTrue(
+                self.app.config['CAS_USERNAME_SESSION_KEY'] not in flask.session)
+            self.assertTrue(
+                self.app.config['CAS_TOKEN_SESSION_KEY'] not in flask.session)
