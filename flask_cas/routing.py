@@ -82,20 +82,22 @@ def validate(ticket):
 
     current_app.logger.debug("validating token {}".format(ticket))
 
+    _PROTOCOLS = {'1': _validate_cas1, '2': _validate_cas2, '3': _validate_cas3}
+    if current_app.config['CAS_VERSION'] not in _PROTOCOLS:
+        raise ValueError('Unsupported CAS_VERSION %r' % current_app.config['CAS_VERSION'])
+
     cas_validate_url = create_cas_validate_url(
         current_app.config['CAS_SERVER'],
         current_app.config['CAS_ROUTE_PREFIX'],
         flask.url_for('.login', _external=True),
-        ticket)
+        ticket,
+        version=current_app.config['CAS_VERSION'])
 
     current_app.logger.debug("Making GET request to {}".format(
         cas_validate_url))
 
     response = urlopen(cas_validate_url)
-    _PROTOCOLS = {'1': _validate_cas1, '2': _validate_cas2, '3': _validate_cas3}
 
-    if current_app.config['CAS_VERSION'] not in _PROTOCOLS:
-        raise ValueError('Unsupported CAS_VERSION %r' % current_app.config['CAS_VERSION'])
 
     _validate = _PROTOCOLS[current_app.config['CAS_VERSION']]
     is_valid = _validate(response)
