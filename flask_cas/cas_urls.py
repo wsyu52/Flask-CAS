@@ -52,7 +52,7 @@ def create_url(base, path=None, *query):
     # seperated string.
     if isinstance(path, list):
         path = filter(lambda x: bool(x), path)
-        path = reduce(lambda l, r: '{}/{}'.format(l.rstrip('/'), r.lstrip('/')), path)
+        path = reduce(lambda l, r: '{0}/{1}'.format(l.rstrip('/'), r.lstrip('/')), path)
     # Add the path to the url if there is something to add.
     if path:
         url = urljoin(url, quote(path))
