@@ -133,12 +133,10 @@ class test_cas_1_routing(test_routing):
         with self.app.test_request_context('/login/'):
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), False)
-            self.assertNotIn(
-                self.app.config['CAS_USERNAME_SESSION_KEY'],
-                flask.session)
-            self.assertNotIn(
-                self.app.config['CAS_TOKEN_SESSION_KEY'],
-                flask.session)
+            self.assertTrue(
+                self.app.config['CAS_USERNAME_SESSION_KEY'] not in flask.session)
+            self.assertTrue(
+                self.app.config['CAS_TOKEN_SESSION_KEY'] not in flask.session)
 
 class test_cas_2_routing(test_routing):
 
