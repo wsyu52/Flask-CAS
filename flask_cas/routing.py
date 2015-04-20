@@ -40,12 +40,15 @@ def login():
     if cas_token_session_key in flask.session:
 
         if validate(flask.session[cas_token_session_key]):
-            redirect_url = flask.url_for(
-                current_app.config['CAS_AFTER_LOGIN'])
+            if 'CAS_AFTER_LOGIN_SESSION_URL' in flask.session:
+                redirect_url = flask.session.pop('CAS_AFTER_LOGIN_SESSION_URL')
+            else:
+                redirect_url = flask.url_for(
+                    current_app.config['CAS_AFTER_LOGIN'])
         else:
             del flask.session[cas_token_session_key]
 
-    current_app.logger.debug('Redirecting to: {}'.format(redirect_url))
+    current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
 
     return flask.redirect(redirect_url)
 
@@ -68,7 +71,7 @@ def logout():
         current_app.config['CAS_VERSION'],
     )
 
-    current_app.logger.debug('Redirecting to: {}'.format(redirect_url))
+    current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
     return flask.redirect(redirect_url)
 
 
@@ -80,7 +83,9 @@ def validate(ticket):
     key `CAS_USERNAME_SESSION_KEY`.
     """
 
-    current_app.logger.debug("validating token {}".format(ticket))
+    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+
+    current_app.logger.debug("validating token {0}".format(ticket))
 
     _PROTOCOLS = {'1': _validate_cas1, '2': _validate_cas2, '3': _validate_cas3}
     if current_app.config['CAS_VERSION'] not in _PROTOCOLS:
@@ -93,7 +98,7 @@ def validate(ticket):
         ticket,
         version=current_app.config['CAS_VERSION'])
 
-    current_app.logger.debug("Making GET request to {}".format(
+    current_app.logger.debug("Making GET request to {0}".format(
         cas_validate_url))
 
     response = urlopen(cas_validate_url)
