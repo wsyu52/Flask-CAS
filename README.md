@@ -124,7 +124,7 @@ you may use the `cas.login_required` method.
 |CAS_LOGIN_ROUTE          | '/cas'         |
 |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
 |CAS_VALIDATE_ROUTE       | '/cas/validate'|
-|CAS_AFTER_LOGOUT         | '/'         |
+|CAS_AFTER_LOGOUT         | None           |
 
 ## Example ##
 
