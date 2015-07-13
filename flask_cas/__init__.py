@@ -35,7 +35,7 @@ class CAS(object):
     |CAS_LOGIN_ROUTE          | '/cas'         |
     |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
     |CAS_VALIDATE_ROUTE       | '/cas/validate'|
-    |CAS_AFTER_LOGOUT         | ''             |
+    |CAS_AFTER_LOGOUT         | None           |
     """
 
     def __init__(self, app=None, url_prefix=None):
