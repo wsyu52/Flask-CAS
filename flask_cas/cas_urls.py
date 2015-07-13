@@ -74,7 +74,7 @@ def create_cas_login_url(cas_url, cas_route, service, renew=None, gateway=None):
     )
 
 
-def create_cas_logout_url(cas_url, cas_route, url=None):
+def create_cas_logout_url(cas_url, cas_route, service=None):
     """ Create a CAS logout URL.
 
     Keyword arguments:
@@ -93,7 +93,7 @@ def create_cas_logout_url(cas_url, cas_route, url=None):
     return create_url(
         cas_url,
         cas_route,
-        ('url', url),
+        ('service', service),
     )
 
 

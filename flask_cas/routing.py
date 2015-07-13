@@ -66,7 +66,8 @@ def logout():
 
     redirect_url = create_cas_logout_url(
         current_app.config['CAS_SERVER'],
-        current_app.config['CAS_LOGOUT_ROUTE'])
+        current_app.config['CAS_LOGOUT_ROUTE'],
+        current_app.config['CAS_AFTER_LOGOUT'])
 
     current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
     return flask.redirect(redirect_url)
