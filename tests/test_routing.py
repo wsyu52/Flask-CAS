@@ -32,6 +32,7 @@ class test_routing(unittest.TestCase):
         self.app.config['CAS_LOGIN_ROUTE'] = '/cas'
         self.app.config['CAS_LOGOUT_ROUTE'] = '/cas/logout'
         self.app.config['CAS_VALIDATE_ROUTE'] = '/cas/validate'
+        
         self.app.config['CAS_AFTER_LOGOUT'] = '/'
 
     def test_setUp(self):
