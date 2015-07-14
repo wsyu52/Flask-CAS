@@ -64,10 +64,15 @@ def logout():
     if cas_username_session_key in flask.session:
         del flask.session[cas_username_session_key]
 
-    redirect_url = create_cas_logout_url(
-        current_app.config['CAS_SERVER'],
-        current_app.config['CAS_LOGOUT_ROUTE'],
-        current_app.config['CAS_AFTER_LOGOUT'])
+    if(current_app.config['CAS_AFTER_LOGOUT'] != None):
+        redirect_url = create_cas_logout_url(
+            current_app.config['CAS_SERVER'],
+            current_app.config['CAS_LOGOUT_ROUTE'],
+            current_app.config['CAS_AFTER_LOGOUT'])
+    else:
+        redirect_url = create_cas_logout_url(
+            current_app.config['CAS_SERVER'],
+            current_app.config['CAS_LOGOUT_ROUTE'])
 
     current_app.logger.debug('Redirecting to: {0}'.format(redirect_url))
     return flask.redirect(redirect_url)
