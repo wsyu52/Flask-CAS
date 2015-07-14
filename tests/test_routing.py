@@ -102,7 +102,7 @@ class test_routing(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas/logout?service=http://localhost:5000')
+                'http://cas.server.com/cas/logout?service=http%3A%2F%2Flocalhost%3A5000')
 
     @mock.patch.object(routing, 'urlopen',
                        return_value=io.BytesIO(b'yes\nbob\n'))
