@@ -32,6 +32,7 @@ class test_routing(unittest.TestCase):
         self.app.config['CAS_LOGIN_ROUTE'] = '/cas'
         self.app.config['CAS_LOGOUT_ROUTE'] = '/cas/logout'
         self.app.config['CAS_VALIDATE_ROUTE'] = '/cas/validate'
+        self.app.config['CAS_AFTER_LOGOUT'] = 'http://localhost:5000'
 
     def test_setUp(self):
         pass
@@ -101,7 +102,7 @@ class test_routing(unittest.TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(
                 response.headers['Location'],
-                'http://cas.server.com/cas/logout')
+                'http://cas.server.com/cas/logout?service=http%3A%2F%2Flocalhost%3A5000')
 
     @mock.patch.object(routing, 'urlopen',
                        return_value=io.BytesIO(b'yes\nbob\n'))

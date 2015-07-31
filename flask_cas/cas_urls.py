@@ -74,7 +74,7 @@ def create_cas_login_url(cas_url, cas_route, service, renew=None, gateway=None):
     )
 
 
-def create_cas_logout_url(cas_url, cas_route, url=None):
+def create_cas_logout_url(cas_url, cas_route, service=None):
     """ Create a CAS logout URL.
 
     Keyword arguments:
@@ -88,12 +88,12 @@ def create_cas_logout_url(cas_url, cas_route, url=None):
     ...     '/cas/logout',
     ...     'http://localhost:5000',
     ... )
-    'http://sso.pdx.edu/cas/logout?url=http%3A%2F%2Flocalhost%3A5000'
+    'http://sso.pdx.edu/cas/logout?service=http%3A%2F%2Flocalhost%3A5000'
     """
     return create_url(
         cas_url,
         cas_route,
-        ('url', url),
+        ('service', service),
     )
 
 

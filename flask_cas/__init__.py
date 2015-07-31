@@ -35,6 +35,7 @@ class CAS(object):
     |CAS_LOGIN_ROUTE          | '/cas'         |
     |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
     |CAS_VALIDATE_ROUTE       | '/cas/validate'|
+    |CAS_AFTER_LOGOUT         | None           |
     """
 
     def __init__(self, app=None, url_prefix=None):
@@ -49,6 +50,7 @@ class CAS(object):
         app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
         app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
         app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/validate')
+        app.config.setdefault('CAS_AFTER_LOGOUT', None)
         # Register Blueprint
         app.register_blueprint(routing.blueprint, url_prefix=url_prefix)
 
