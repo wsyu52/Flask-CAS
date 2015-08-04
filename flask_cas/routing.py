@@ -1,4 +1,5 @@
 import flask
+from xmltodict import parse
 from flask import current_app
 from .cas_urls import create_cas_login_url
 from .cas_urls import create_cas_logout_url
@@ -24,7 +25,7 @@ def login():
     to login. If the login was successful, the CAS will respond to this
     route with the ticket in the url. The ticket is then validated.
     If validation was successful the logged in username is saved in
-    the user's session under the key `CAS_USERNAME_SESSION_KEY`.
+    the user's session under the key `CAS_USER_SESSION_KEY`.
     """
 
     cas_token_session_key = current_app.config['CAS_TOKEN_SESSION_KEY']
@@ -59,10 +60,10 @@ def logout():
     When the user accesses this route they are logged out.
     """
 
-    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+    cas_user_session_key = current_app.config['CAS_USER_SESSION_KEY']
 
-    if cas_username_session_key in flask.session:
-        del flask.session[cas_username_session_key]
+    if cas_user_session_key in flask.session:
+        del flask.session[cas_user_session_key]
 
     if(current_app.config['CAS_AFTER_LOGOUT'] != None):
         redirect_url = create_cas_logout_url(
@@ -83,10 +84,10 @@ def validate(ticket):
     Will attempt to validate the ticket. If validation fails, then False
     is returned. If validation is successful, then True is returned
     and the validated username is saved in the session under the
-    key `CAS_USERNAME_SESSION_KEY`.
+    key `CAS_USER_SESSION_KEY`.
     """
 
-    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+    cas_user_session_key = current_app.config['CAS_USER_SESSION_KEY']
 
     current_app.logger.debug("validating token {0}".format(ticket))
 
@@ -99,17 +100,28 @@ def validate(ticket):
     current_app.logger.debug("Making GET request to {0}".format(
         cas_validate_url))
 
+    xml_from_dict = {}
+    isValid = False
+
     try:
-        (isValid, username) = urlopen(cas_validate_url).readlines()
-        isValid = True if isValid.strip() == b'yes' else False
-        username = username.strip().decode('utf8', 'ignore')
+        xmldump = urlopen(cas_validate_url).read().strip().decode('utf8', 'ignore')
+        xml_from_dict = parse(xmldump)
+        isValid = True if "cas:authenticationSuccess" in xml_from_dict["cas:serviceResponse"] else False
     except ValueError:
         current_app.logger.error("CAS returned unexpected result")
-        isValid = False
 
     if isValid:
         current_app.logger.debug("valid")
-        flask.session[cas_username_session_key] = username
+        xml_from_dict = xml_from_dict["cas:serviceResponse"]["cas:authenticationSuccess"]
+        username = xml_from_dict["cas:user"]
+        attributes = xml_from_dict["cas:attributes"]
+
+        if "cas:memberOf" in attributes:
+            attributes["cas:memberOf"] = attributes["cas:memberOf"].lstrip('[').rstrip(']').split(',')
+            for group_number in range(0, len(attributes['cas:memberOf'])):
+                attributes['cas:memberOf'][group_number] = attributes['cas:memberOf'][group_number].lstrip(' ').rstrip(' ')
+
+        flask.session[cas_user_session_key] = (username, attributes)
     else:
         current_app.logger.debug("invalid")
 

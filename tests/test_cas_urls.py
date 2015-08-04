@@ -184,21 +184,21 @@ class test_create_cas_validate_url(unittest.TestCase):
         self.assertEqual(
             create_cas_validate_url(
                 'http://sso.pdx.edu',
-                '/cas/validate',
+                '/cas/serviceValidate',
                 'http://localhost:5000/login',
                 'ST-58274-x839euFek492ou832Eena7ee-cas'
             ),
-            'http://sso.pdx.edu/cas/validate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas'
+            'http://sso.pdx.edu/cas/serviceValidate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas'
         )
 
     def test_with_renew(self):
         self.assertEqual(
             create_cas_validate_url(
                 'http://sso.pdx.edu',
-                '/cas/validate',
+                '/cas/serviceValidate',
                 'http://localhost:5000/login',
                 'ST-58274-x839euFek492ou832Eena7ee-cas',
                 renew='true',
             ),
-            'http://sso.pdx.edu/cas/validate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas&renew=true'
+            'http://sso.pdx.edu/cas/serviceValidate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas&renew=true'
         )

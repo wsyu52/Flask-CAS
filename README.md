@@ -80,7 +80,7 @@ The `/login/` route will redirect the user to the CAS specified by the
 `CAS_SERVER` configuration value. If login is successful the user will
 be redirect to the endpoint specified by the `CAS_AFTER_LOGIN`
 configuration value, and the logged in user's `username` will be store 
-in the session under the key specified by the `CAS_USERNAME_SESSION_KEY` 
+in the session under the key specified by the `CAS_USER_SESSION_KEY` 
 configuration value.
 
 The `/logout/` route will redirect the user to the CAS logout page and
@@ -117,14 +117,14 @@ you may use the `cas.login_required` method.
 
 #### Optional Configs ####
 
-|Key                      | Default        |
-|-------------------------|----------------|
-|CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
-|CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
-|CAS_LOGIN_ROUTE          | '/cas'         |
-|CAS_LOGOUT_ROUTE         | '/cas/logout'  |
-|CAS_VALIDATE_ROUTE       | '/cas/validate'|
-|CAS_AFTER_LOGOUT         | None           |
+|Key                      | Default               |
+|-------------------------|-----------------------|
+|CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN            |
+|CAS_USER_SESSION_KEY     | CAS_USER              |
+|CAS_LOGIN_ROUTE          | '/cas'                |
+|CAS_LOGOUT_ROUTE         | '/cas/logout'         |
+|CAS_VALIDATE_ROUTE       | '/cas/serviceValidate'|
+|CAS_AFTER_LOGOUT         | None                  |
 
 ## Example ##
 
