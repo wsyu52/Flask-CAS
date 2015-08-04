@@ -77,7 +77,7 @@ class CAS(object):
             return None
 
     @property
-    def attribute(self):
+    def attributes(self):
         if self.app.config['CAS_USER_SESSION_KEY'] in flask.session:
             return flask.session.get(self.app.config['CAS_USER_SESSION_KEY'])[1]
         else:
