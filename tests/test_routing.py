@@ -27,7 +27,8 @@ class test_routing(unittest.TestCase):
 
         self.app.config['CAS_SERVER'] = 'http://cas.server.com'
         self.app.config['CAS_TOKEN_SESSION_KEY'] = '_CAS_TOKEN'
-        self.app.config['CAS_USER_SESSION_KEY'] = 'CAS_USER'
+        self.app.config['CAS_USERNAME_SESSION_KEY'] = 'CAS_USERNAME'
+        self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] = 'CAS_ATTRIBUTES'
         self.app.config['CAS_AFTER_LOGIN'] = 'root'
         self.app.config['CAS_LOGIN_ROUTE'] = '/cas'
         self.app.config['CAS_LOGOUT_ROUTE'] = '/cas/logout'
@@ -86,7 +87,9 @@ class test_routing(unittest.TestCase):
                 s[self.app.config['CAS_TOKEN_SESSION_KEY']] = ticket
             client.get('/login/')
             self.assertTrue(
-                self.app.config['CAS_USER_SESSION_KEY'] not in flask.session)
+                self.app.config['CAS_USERNAME_SESSION_KEY'] not in flask.session)
+            self.assertTrue(
+                self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] not in flask.session)
             self.assertTrue(
                 self.app.config['CAS_TOKEN_SESSION_KEY'] not in flask.session)
 
@@ -155,6 +158,8 @@ class test_routing(unittest.TestCase):
             ticket = '12345-abcdefg-cas'
             self.assertEqual(routing.validate(ticket), False)
             self.assertTrue(
-                self.app.config['CAS_USER_SESSION_KEY'] not in flask.session)
+                self.app.config['CAS_USERNAME_SESSION_KEY'] not in flask.session)
+            self.assertTrue(
+                self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] not in flask.session)
             self.assertTrue(
                 self.app.config['CAS_TOKEN_SESSION_KEY'] not in flask.session)

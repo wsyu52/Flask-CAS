@@ -25,7 +25,9 @@ def login():
     to login. If the login was successful, the CAS will respond to this
     route with the ticket in the url. The ticket is then validated.
     If validation was successful the logged in username is saved in
-    the user's session under the key `CAS_USER_SESSION_KEY`.
+    the user's session under the key `CAS_USERNAME_SESSION_KEY` and
+    the user's attributes are saved under the key
+    'CAS_USERNAME_ATTRIBUTE_KEY'
     """
 
     cas_token_session_key = current_app.config['CAS_TOKEN_SESSION_KEY']
@@ -60,10 +62,14 @@ def logout():
     When the user accesses this route they are logged out.
     """
 
-    cas_user_session_key = current_app.config['CAS_USER_SESSION_KEY']
+    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+    cas_attributes_session_key = current_app.config['CAS_ATTRIBUTES_SESSION_KEY']
 
-    if cas_user_session_key in flask.session:
-        del flask.session[cas_user_session_key]
+    if cas_username_session_key in flask.session:
+        del flask.session[cas_username_session_key]
+
+    if cas_attributes_session_key in flask.session:
+        del flask.session[cas_attributes_session_key]
 
     if(current_app.config['CAS_AFTER_LOGOUT'] != None):
         redirect_url = create_cas_logout_url(
@@ -84,10 +90,12 @@ def validate(ticket):
     Will attempt to validate the ticket. If validation fails, then False
     is returned. If validation is successful, then True is returned
     and the validated username is saved in the session under the
-    key `CAS_USER_SESSION_KEY`.
+    key `CAS_USERNAME_SESSION_KEY` while tha validated attributes dictionary
+    is saved under the key 'CAS_ATTRIBUTES_SESSION_KEY'.
     """
 
-    cas_user_session_key = current_app.config['CAS_USER_SESSION_KEY']
+    cas_username_session_key = current_app.config['CAS_USERNAME_SESSION_KEY']
+    cas_attributes_session_key = current_app.config['CAS_ATTRIBUTES_SESSION_KEY']
 
     current_app.logger.debug("validating token {0}".format(ticket))
 
@@ -121,7 +129,8 @@ def validate(ticket):
             for group_number in range(0, len(attributes['cas:memberOf'])):
                 attributes['cas:memberOf'][group_number] = attributes['cas:memberOf'][group_number].lstrip(' ').rstrip(' ')
 
-        flask.session[cas_user_session_key] = (username, attributes)
+        flask.session[cas_username_session_key] = username
+        flask.session[cas_attributes_session_key] = attributes
     else:
         current_app.logger.debug("invalid")
 

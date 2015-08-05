@@ -28,14 +28,15 @@ class CAS(object):
 
     Optional Configs:
 
-    |Key                      | Default               |
-    |-------------------------|-----------------------|
-    |CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN            |
-    |CAS_USER_SESSION_KEY     | CAS_USER          |
-    |CAS_LOGIN_ROUTE          | '/cas'                |
-    |CAS_LOGOUT_ROUTE         | '/cas/logout'         |
-    |CAS_VALIDATE_ROUTE       | '/cas/serviceValidate'|
-    |CAS_AFTER_LOGOUT         | None                  |
+    |Key                        | Default               |
+    |---------------------------|-----------------------|
+    |CAS_TOKEN_SESSION_KEY      | _CAS_TOKEN            |
+    |CAS_USERNAME_SESSION_KEY   | CAS_USERNAME          |
+    |CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES        |
+    |CAS_LOGIN_ROUTE            | '/cas'                |
+    |CAS_LOGOUT_ROUTE           | '/cas/logout'         |
+    |CAS_VALIDATE_ROUTE         | '/cas/serviceValidate'|
+    |CAS_AFTER_LOGOUT           | None                  |
     """
 
     def __init__(self, app=None, url_prefix=None):
@@ -46,11 +47,12 @@ class CAS(object):
     def init_app(self, app, url_prefix=None):
         # Configuration defaults
         app.config.setdefault('CAS_TOKEN_SESSION_KEY', '_CAS_TOKEN')
-        app.config.setdefault('CAS_USER_SESSION_KEY', 'CAS_USER')
+        app.config.setdefault('CAS_USERNAME_SESSION_KEY', 'CAS_USERNAME')
+        app.config.setdefault('CAS_ATTRIBUTES_SESSION_KEY', 'CAS_ATTRIBUTES')
         app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
         app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
         app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/serviceValidate')
-        # Requires CAS 3.0
+        # Requires CAS 2.0
         app.config.setdefault('CAS_AFTER_LOGOUT', None)
         # Register Blueprint
         app.register_blueprint(routing.blueprint, url_prefix=url_prefix)
@@ -71,15 +73,15 @@ class CAS(object):
 
     @property
     def username(self):
-        if self.app.config['CAS_USER_SESSION_KEY'] in flask.session:
-            return flask.session.get(self.app.config['CAS_USER_SESSION_KEY'])[0]
+        if self.app.config['CAS_USERNAME_SESSION_KEY'] in flask.session:
+            return flask.session.get(self.app.config['CAS_USERNAME_SESSION_KEY'])
         else:
             return None
 
     @property
     def attributes(self):
-        if self.app.config['CAS_USER_SESSION_KEY'] in flask.session:
-            return flask.session.get(self.app.config['CAS_USER_SESSION_KEY'])[1]
+        if self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] in flask.session:
+            return flask.session.get(self.app.config['CAS_ATTRIBUTES_SESSION_KEY'])
         else:
             return None
 
@@ -97,7 +99,7 @@ def logout():
 def login_required(function):
     @wraps(function)
     def wrap(*args, **kwargs):
-        if 'CAS_USER' not in flask.session:
+        if 'CAS_USERNAME' not in flask.session:
             flask.session['CAS_AFTER_LOGIN_SESSION_URL'] = flask.request.path
             return login()
         else:
