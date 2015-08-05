@@ -103,7 +103,7 @@ def create_cas_validate_url(cas_url, cas_route, service, ticket,
 
     Keyword arguments:
     cas_url -- The url to the CAS (ex. http://sso.pdx.edu)
-    cas_route -- The route where the CAS lives on server (ex. /cas/validate)
+    cas_route -- The route where the CAS lives on server (ex. /cas/serviceValidate)
     service -- (ex.  http://localhost:5000/login)
     ticket -- (ex. 'ST-58274-x839euFek492ou832Eena7ee-cas')
     renew -- "true" or "false"
@@ -111,11 +111,11 @@ def create_cas_validate_url(cas_url, cas_route, service, ticket,
     Example usage:
     >>> create_cas_validate_url(
     ...     'http://sso.pdx.edu',
-    ...     '/cas/validate',
+    ...     '/cas/serviceValidate',
     ...     'http://localhost:5000/login',
     ...     'ST-58274-x839euFek492ou832Eena7ee-cas'
     ... )
-    'http://sso.pdx.edu/cas/validate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas'
+    'http://sso.pdx.edu/cas/serviceValidate?service=http%3A%2F%2Flocalhost%3A5000%2Flogin&ticket=ST-58274-x839euFek492ou832Eena7ee-cas'
     """
     return create_url(
         cas_url,

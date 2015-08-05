@@ -4,7 +4,7 @@ Flask-CAS
 [![Build Status](https://travis-ci.org/cameronbwhite/Flask-CAS.png?branch=master)](https://travis-ci.org/cameronbwhite/Flask-CAS)
 
 Flask-CAS is a Flask extension which makes it easy to
-authenticate with a CAS.
+authenticate with a CAS Server (v2.0+).
 
 ## What is CAS? ##
 
@@ -81,10 +81,12 @@ The `/login/` route will redirect the user to the CAS specified by the
 be redirect to the endpoint specified by the `CAS_AFTER_LOGIN`
 configuration value, and the logged in user's `username` will be store 
 in the session under the key specified by the `CAS_USERNAME_SESSION_KEY` 
-configuration value.
+configuration value. If `attributes` are available, they will be stored 
+in the session under the key specified by the 
+`CAS_ATTRIBUTES_SESSION_KEY`
 
 The `/logout/` route will redirect the user to the CAS logout page and
-the `username` will be removed from the session.
+the `username` and `attributes` will be removed from the session.
 
 For convenience you can use the `cas.login` and `cas.logout`
 functions to redirect users to the login and logout pages. 
@@ -117,14 +119,15 @@ you may use the `cas.login_required` method.
 
 #### Optional Configs ####
 
-|Key                      | Default        |
-|-------------------------|----------------|
-|CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
-|CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
-|CAS_LOGIN_ROUTE          | '/cas'         |
-|CAS_LOGOUT_ROUTE         | '/cas/logout'  |
-|CAS_VALIDATE_ROUTE       | '/cas/validate'|
-|CAS_AFTER_LOGOUT         | None           |
+|Key                        | Default               |
+|---------------------------|-----------------------|
+|CAS_TOKEN_SESSION_KEY      | _CAS_TOKEN            |
+|CAS_USERNAME_SESSION_KEY   | CAS_USERNAME          |
+|CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES        |
+|CAS_LOGIN_ROUTE            | '/cas'                |
+|CAS_LOGOUT_ROUTE           | '/cas/logout'         |
+|CAS_VALIDATE_ROUTE         | '/cas/serviceValidate'|
+|CAS_AFTER_LOGOUT           | None                  |
 
 ## Example ##
 
@@ -145,5 +148,6 @@ def route_root():
     return flask.render_template(
         'layout.html',
         username = cas.username,
+        display_name = cas.attributes['cas:displayName']
     )
 ```

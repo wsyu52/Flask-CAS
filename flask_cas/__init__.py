@@ -28,14 +28,15 @@ class CAS(object):
 
     Optional Configs:
 
-    |Key                      | Default        |
-    |-------------------------|----------------|
-    |CAS_TOKEN_SESSION_KEY    | _CAS_TOKEN     |
-    |CAS_USERNAME_SESSION_KEY | CAS_USERNAME   |
-    |CAS_LOGIN_ROUTE          | '/cas'         |
-    |CAS_LOGOUT_ROUTE         | '/cas/logout'  |
-    |CAS_VALIDATE_ROUTE       | '/cas/validate'|
-    |CAS_AFTER_LOGOUT         | None           |
+    |Key                        | Default               |
+    |---------------------------|-----------------------|
+    |CAS_TOKEN_SESSION_KEY      | _CAS_TOKEN            |
+    |CAS_USERNAME_SESSION_KEY   | CAS_USERNAME          |
+    |CAS_ATTRIBUTES_SESSION_KEY | CAS_ATTRIBUTES        |
+    |CAS_LOGIN_ROUTE            | '/cas'                |
+    |CAS_LOGOUT_ROUTE           | '/cas/logout'         |
+    |CAS_VALIDATE_ROUTE         | '/cas/serviceValidate'|
+    |CAS_AFTER_LOGOUT           | None                  |
     """
 
     def __init__(self, app=None, url_prefix=None):
@@ -47,9 +48,11 @@ class CAS(object):
         # Configuration defaults
         app.config.setdefault('CAS_TOKEN_SESSION_KEY', '_CAS_TOKEN')
         app.config.setdefault('CAS_USERNAME_SESSION_KEY', 'CAS_USERNAME')
+        app.config.setdefault('CAS_ATTRIBUTES_SESSION_KEY', 'CAS_ATTRIBUTES')
         app.config.setdefault('CAS_LOGIN_ROUTE', '/cas')
         app.config.setdefault('CAS_LOGOUT_ROUTE', '/cas/logout')
-        app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/validate')
+        app.config.setdefault('CAS_VALIDATE_ROUTE', '/cas/serviceValidate')
+        # Requires CAS 2.0
         app.config.setdefault('CAS_AFTER_LOGOUT', None)
         # Register Blueprint
         app.register_blueprint(routing.blueprint, url_prefix=url_prefix)
@@ -70,8 +73,17 @@ class CAS(object):
 
     @property
     def username(self):
-        return flask.session.get(
-            self.app.config['CAS_USERNAME_SESSION_KEY'], None)
+        if self.app.config['CAS_USERNAME_SESSION_KEY'] in flask.session:
+            return flask.session.get(self.app.config['CAS_USERNAME_SESSION_KEY'])
+        else:
+            return None
+
+    @property
+    def attributes(self):
+        if self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] in flask.session:
+            return flask.session.get(self.app.config['CAS_ATTRIBUTES_SESSION_KEY'])
+        else:
+            return None
 
     @property
     def token(self):
