@@ -73,17 +73,13 @@ class CAS(object):
 
     @property
     def username(self):
-        if self.app.config['CAS_USERNAME_SESSION_KEY'] in flask.session:
-            return flask.session.get(self.app.config['CAS_USERNAME_SESSION_KEY'])
-        else:
-            return None
+        return flask.session.get(
+            self.app.config['CAS_USERNAME_SESSION_KEY'], None)
 
     @property
     def attributes(self):
-        if self.app.config['CAS_ATTRIBUTES_SESSION_KEY'] in flask.session:
-            return flask.session.get(self.app.config['CAS_ATTRIBUTES_SESSION_KEY'])
-        else:
-            return None
+        return flask.session.get(
+            self.app.config['CAS_ATTRIBUTES_SESSION_KEY'], None)
 
     @property
     def token(self):
