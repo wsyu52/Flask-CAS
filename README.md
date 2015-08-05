@@ -59,18 +59,18 @@ There are two ways to use the `CAS` class.
 
 1. Add the application object at construction time
 
-    ```python
-    app = Flask(__name__)
-    CAS(app)
-    ```
+```python
+app = Flask(__name__)
+CAS(app)
+```
 
 2. Or initialize the application with `CAS.init_app`
 
-    ```python
-    cas = CAS()
-    app = Flask(__name__)
-    cas.init_app(app)
-    ```
+```python
+cas = CAS()
+app = Flask(__name__)
+cas.init_app(app)
+```
 
 The `CAS` class will add two routes `/login/` and `/logout/`. You can
 prefix these routes if you pass a second argument to the `CAS`
@@ -91,22 +91,22 @@ the `username` and `attributes` will be removed from the session.
 For convenience you can use the `cas.login` and `cas.logout`
 functions to redirect users to the login and logout pages. 
 
-    ```python
-    from flask.ext.cas import login
-    from flask.ext.cas import logout
-    ```
+```python
+from flask.ext.cas import login
+from flask.ext.cas import logout
+```
 
 If you would like to require that a user is logged in before continuing
 you may use the `cas.login_required` method.
 
-    ```python
-    from flask.ext.cas import login_required
+```python
+from flask.ext.cas import login_required
 
-    app.route('/foo')
-    @login_required
-    def foo():
-        pass
-    ```
+app.route('/foo')
+@login_required
+def foo():
+    pass
+```
 
 ### Configuration ###
 
