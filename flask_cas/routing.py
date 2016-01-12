@@ -122,7 +122,7 @@ def validate(ticket):
         current_app.logger.debug("valid")
         xml_from_dict = xml_from_dict["cas:serviceResponse"]["cas:authenticationSuccess"]
         username = xml_from_dict["cas:user"]
-        attributes = xml_from_dict["cas:attributes"]
+        attributes = xml_from_dict.get("cas:attributes", {})
 
         if "cas:memberOf" in attributes:
             attributes["cas:memberOf"] = attributes["cas:memberOf"].lstrip('[').rstrip(']').split(',')
