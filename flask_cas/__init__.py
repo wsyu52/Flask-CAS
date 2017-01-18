@@ -96,7 +96,7 @@ def login_required(function):
     @wraps(function)
     def wrap(*args, **kwargs):
         if 'CAS_USERNAME' not in flask.session:
-            flask.session['CAS_AFTER_LOGIN_SESSION_URL'] = flask.request.path
+            flask.session['CAS_AFTER_LOGIN_SESSION_URL'] = flask.request.url
             return login()
         else:
             return function(*args, **kwargs)
